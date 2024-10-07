@@ -1,15 +1,35 @@
 use std::io;
+use rand::Rng;
+use std::cmp::Ordering;
 
 fn main() {
     println!("Zgadnij liczbę!");
 
-    println!("Wpisz swój typ.");
+    let secret_number = rand::thread_rng().gen_range(1..=100);
 
-    let mut guess = String::new();
+    loop {
+        println!("Wpisz swój typ.");
 
-    io::stdin()
-        .read_line(&mut guess)
-        .expect("Nie udało się odczytać linii");
+        let mut guess = String::new();
 
-    println!("Twój typ to: {}", guess);
+        io::stdin()
+            .read_line(&mut guess)
+            .expect("Nie udało się odczytać linii");
+
+        let guess: u32 = match guess.trim().parse() {
+            Ok(num) => num,
+            Err(_) => continue,
+        };
+
+        println!("Twój typ to: {guess}");
+
+        match guess.cmp(&secret_number) {
+            Ordering::Less => println!("Za mała liczba!"),
+            Ordering::Greater => println!("Za duża liczba!"),
+            Ordering::Equal => {
+                println!("Zgadłeś!");
+                break;
+            }
+        }
+    }
 }
